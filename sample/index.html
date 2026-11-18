@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chavadi Menu (concept)</title>
+<meta name="theme-color" content="#F5F2EA">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* taken from their rooftop photos: limewash walls, cobalt tables, vines, mustard wall, terracotta pots */
+  --bg:#F5F2EA; --surface:#FFFFFF; --ink:#1D231E; --muted:#5F665E; --line:#E3DDCF;
+  --cobalt:#1F4E9E; --leaf:#3D6B35; --leaf-bg:#E8EFE2; --mustard:#E8B23A; --terra:#B4532F;
+  --ember:var(--terra); --ember-ink:#fff; --veg:#1F8A4C; --nonveg:#B3261E;
+  --r:14px; --serif:"Fraunces",Georgia,serif; --sans:"Manrope",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:112px;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--ember);outline-offset:2px;border-radius:6px}
+.app{max-width:430px;margin:0 auto;padding-bottom:110px;background:var(--bg);min-height:100vh}
+@media (min-width:480px){body{background:#DCD6C8}.app{box-shadow:0 0 0 1px var(--line),0 20px 60px rgba(29,35,30,.18)}}
+img{display:block;max-width:100%}
+
+/* hero */
+.hero{position:relative;height:260px;overflow:hidden;color:#fff}
+.hero img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%;transition:opacity .4s}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(10,20,12,.78))}
+.hero .in{position:absolute;left:16px;right:16px;bottom:16px;z-index:1;display:flex;gap:12px;align-items:flex-end}
+.hero h1{font:600 28px/1.1 var(--serif);letter-spacing:-.01em}
+.hero p{font-size:13px;opacity:.9;margin-top:4px}
+
+/* jaali: the white brick lattice on their rooftop, as a thin band */
+.jaali{height:12px;background:var(--surface);background-image:linear-gradient(90deg,var(--line) 2px,transparent 2px),linear-gradient(var(--line) 2px,transparent 2px);background-size:12px 6px}
+/* story card */
+.story{margin:18px 16px 4px;padding:16px 18px;border-radius:var(--r);background:var(--mustard);color:#2A1F08;display:flex;gap:14px;align-items:center}
+.story img{width:76px;height:76px;border-radius:10px;object-fit:cover;flex:none}
+.story b{font:600 18px/1.2 var(--serif);display:block;margin-bottom:4px}
+.story p{font-size:14px;line-height:1.4}
+
+/* sticky bar */
+.bar{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.row1{display:flex;gap:8px;padding:12px 16px 8px;align-items:center}
+.tabs{display:flex;flex:1;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+.tabs button{flex:1;min-height:38px;border-radius:999px;font-weight:600;font-size:14px;color:var(--muted)}
+.tabs button[aria-selected=true]{background:var(--cobalt);color:#fff}
+.iconbtn{width:44px;height:44px;border-radius:999px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;flex:none}
+.search{display:none;padding:0 16px 8px}
+.search.on{display:block}
+.search input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:0 14px;font:inherit}
+.row2{display:flex;gap:8px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none}
+.row2::-webkit-scrollbar{display:none}
+.chip{flex:none;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:14px;font-weight:500;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.chip[aria-pressed=true],.chip.cur{background:var(--cobalt);border-color:var(--cobalt);color:#fff}
+.sep{flex:none;width:1px;background:var(--line);margin:4px 2px}
+
+/* list */
+section.cat{padding:22px 16px 4px}
+section.cat h2{font:600 22px/1.2 var(--serif);margin-bottom:4px;color:var(--leaf)}
+section.cat .n{font-size:13px;color:var(--muted);margin-bottom:10px}
+.item{display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--line);width:100%;text-align:left;align-items:flex-start}
+.item:first-of-type{border-top:0}
+.item .txt{flex:1;min-width:0}
+.item h3{font-size:16px;font-weight:700;line-height:1.3;margin:4px 0 4px}
+.item .d{font-size:14px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item .p{font-weight:700;margin-top:8px;font-size:15px}
+.item .p small{font-weight:500;color:var(--muted);font-size:13px}
+.ph{position:relative;flex:none;width:112px}
+.ph img{width:112px;height:112px;object-fit:cover;border-radius:var(--r);background:#E9E2D6}
+.ph .noimg{width:112px;height:72px;border-radius:var(--r);background:var(--surface);border:1px dashed var(--line)}
+.add{position:absolute;left:50%;bottom:-12px;transform:translateX(-50%);min-width:84px;min-height:36px;border-radius:10px;background:var(--surface);color:var(--ember);font-weight:700;font-size:14px;box-shadow:0 2px 8px rgba(31,27,22,.14);border:1px solid var(--line)}
+.add.has{background:var(--ember);color:var(--ember-ink);border-color:var(--ember)}
+
+/* veg mark: the Indian square-with-dot */
+.mark{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.vm{width:14px;height:14px;border:1.5px solid var(--veg);border-radius:3px;display:grid;place-items:center;flex:none}
+.vm::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--veg)}
+.vm.nv{border-color:var(--nonveg)}
+.vm.nv::after{border-radius:0;width:0;height:0;background:none;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:7px solid var(--nonveg)}
+.spice{color:var(--ember);font-weight:600}
+.origin{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:var(--leaf-bg);color:var(--leaf);font-size:11px;font-weight:700;letter-spacing:.02em}
+.empty{padding:40px 16px;text-align:center;color:var(--muted)}
+
+/* bottom list bar */
+.cartbar{position:fixed;left:50%;transform:translate(-50%,120%);bottom:calc(12px + env(safe-area-inset-bottom));width:calc(100% - 24px);max-width:406px;min-height:56px;border-radius:14px;background:var(--cobalt);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-weight:600;z-index:30;transition:transform .25s ease}
+.cartbar.on{transform:translate(-50%,0)}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(20,16,12,.45);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:50%;bottom:0;width:100%;max-width:430px;max-height:92vh;overflow:auto;background:var(--surface);border-radius:20px 20px 0 0;transform:translate(-50%,105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);z-index:50;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+.sheet.on{transform:translate(-50%,0)}
+.sheet .big{width:100%;aspect-ratio:4/3;object-fit:cover}
+.sheet .body{padding:18px 20px}
+.sheet h3{font:600 24px/1.2 var(--serif);margin:6px 0 8px}
+.sheet .d{color:var(--muted)}
+.close{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:999px;background:rgba(255,252,247,.92);display:grid;place-items:center;font-size:22px;z-index:1}
+.sizes{display:flex;gap:8px;margin:16px 0 0}
+.sizes button{flex:1;min-height:48px;border:1.5px solid var(--line);border-radius:12px;font-weight:600}
+.sizes button[aria-pressed=true]{border-color:var(--ink);background:var(--bg)}
+.sizes small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.foot{display:flex;gap:12px;margin-top:20px;align-items:center}
+.step{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:12px}
+.step button{width:44px;height:48px;font-size:20px;font-weight:600}
+.step span{min-width:24px;text-align:center;font-weight:700}
+.primary{flex:1;min-height:52px;border-radius:12px;background:var(--ember);color:var(--ember-ink);font-weight:700;font-size:16px}
+.primary:active,.add:active,.cartbar:active{transform-origin:center;filter:brightness(.94)}
+.line{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.line:first-child{border-top:0}
+.line .q{display:flex;align-items:center;gap:4px}
+.line .q button{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);font-weight:700}
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+footer{padding:28px 16px;font-size:13px;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <img class="bg" id="heroimg" src="img/place-day.jpg" alt="Chavadi's rooftop: vines over cobalt-blue tables">
+    <div class="in">
+      <div>
+        <h1>Chavadi Native Kitchen</h1>
+        <p>Native kitchen · Community café · Rooftop off Bannerghatta Road</p>
+      </div>
+    </div>
+  </header>
+  <div class="jaali" aria-hidden="true"></div>
+  <div class="story">
+    <img src="img/place-mustard.jpg" alt="" width="76" height="76">
+    <div><b>Pull up a chair</b><p>On the coast, a chavadi is the veranda where you invite people in. In Tamil Nadu, it is the village square. Ours is a rooftop.</p></div>
+  </div>
+
+  <div class="bar" id="bar">
+    <div class="row1">
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <button class="iconbtn" id="sbtn" aria-label="Search the menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </button>
+    </div>
+    <div class="search" id="sbox"><input id="q" type="search" placeholder="Search dishes, drinks…" autocomplete="off" aria-label="Search"></div>
+    <div class="row2" id="chips"></div>
+  </div>
+
+  <main id="list"></main>
+  <footer>Prices in ₹, before taxes. Concept sample, not the live menu.</footer>
+</div>
+
+<button class="cartbar" id="cartbar" aria-live="polite"><span id="cbl"></span><span>View list →</span></button>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Details"></div>
+
+<script src="data.js"></script>
+<script>
+const M = window.MENU, $ = s => document.querySelector(s);
+const TABS = [...new Set(M.map(i => i.tab))];
+const SIZES = ['Regular', 'Large']; // shortcut: size names are a guess, the source data has none
+let tab = TABS[0], q = '', vegOnly = false, spicyOnly = false;
+let list = {};
+try { list = JSON.parse(localStorage.getItem('chavadi-list') || '{}'); } catch (e) {}
+const save = () => { try { localStorage.setItem('chavadi-list', JSON.stringify(list)); } catch (e) {} };
+const byId = Object.fromEntries(M.map(i => [i.id, i]));
+const rs = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const key = (id, s) => id + ':' + s;
+const qtyOf = id => Object.entries(list).filter(([k]) => k.split(':')[0] == id).reduce((a, [, v]) => a + v, 0);
+const mark = i => `<span class="mark"><span class="vm ${i.veg ? '' : 'nv'}" aria-hidden="true"></span>${i.veg ? 'Veg' : 'Non-veg'}${i.spicy ? ' · <span class="spice">Spicy</span>' : ''}</span>`;
+const isFood = () => tab === 'Food';
+const ORIGIN = /karavali|mangalorean|mangalore|kerala|north karnataka|andhra|malpe|kundapur/i;
+const origin = i => { const m = (i.name + ' ' + i.desc).match(ORIGIN); if (!m) return ''; const w = m[0].toLowerCase().replace('mangalorean', 'mangalore'); return `<span class="origin">${w.replace(/\b\w/g, c => c.toUpperCase())}</span>`; };
+const HERO = {Food: ['place-day', 'vines over cobalt-blue tables'], Drinks: ['place-jaali', 'white jaali screens and hanging vines'], Bar: ['place-night', 'the rooftop at night under string lights']};
+
+function renderTabs() {
+  $('#tabs').innerHTML = TABS.map(t => `<button role="tab" aria-selected="${t === tab}" data-t="${t}">${t}</button>`).join('');
+}
+function shown() {
+  const s = q.trim().toLowerCase();
+  return M.filter(i => (s ? true : i.tab === tab)
+    && (!s || (i.name + ' ' + i.desc + ' ' + i.cat).toLowerCase().includes(s))
+    && (!vegOnly || i.veg) && (!spicyOnly || i.spicy));
+}
+function render() {
+  const items = shown(), cats = [...new Set(items.map(i => i.cat))];
+  const filters = isFood() || q ? `<button class="chip" data-f="veg" aria-pressed="${vegOnly}"><span class="vm" aria-hidden="true"></span>Veg only</button><button class="chip" data-f="spicy" aria-pressed="${spicyOnly}"><span aria-hidden="true">🌶</span>Spicy</button><span class="sep"></span>` : '';
+  curCat = null;
+  $('#chips').innerHTML = filters + cats.map(c => `<button class="chip" data-c="${esc(c)}">${esc(c)}</button>`).join('');
+  $('#list').innerHTML = cats.length ? cats.map(c => {
+    const its = items.filter(i => i.cat === c);
+    return `<section class="cat" id="c-${slug(c)}" data-c="${esc(c)}"><h2>${esc(c)}</h2><p class="n">${its.length} ${its.length === 1 ? 'item' : 'items'}</p>${its.map(card).join('')}</section>`;
+  }).join('') : `<p class="empty">Nothing matches. Try another word or clear the filters.</p>`;
+  spy();
+}
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+function card(i) {
+  const n = qtyOf(i.id), from = i.prices.length > 1 ? '<small>from </small>' : '';
+  return `<div class="item" data-open="${i.id}" role="button" tabindex="0" aria-label="${esc(i.name)}, ${rs(i.prices[0])}">
+    <div class="txt">${mark(i)}${origin(i)}<h3>${esc(i.name)}</h3>${i.desc ? `<p class="d">${esc(i.desc)}</p>` : ''}<p class="p">${from}${rs(i.prices[0])}</p></div>
+    <div class="ph">${i.img ? `<img src="${i.img}" alt="" loading="lazy" width="112" height="112">` : '<div class="noimg"></div>'}
+      <button class="add ${n ? 'has' : ''}" data-add="${i.id}" aria-label="Add ${esc(i.name)}">${n ? n + ' added' : 'Add'}</button></div>
+  </div>`;
+}
+
+// detail sheet
+let cur = null, size = 0, qty = 1;
+function open(id) {
+  cur = byId[id]; size = 0; qty = 1; drawSheet(); show(true);
+}
+function drawSheet() {
+  const i = cur;
+  $('#sheet').innerHTML = `<button class="close" data-close aria-label="Close">×</button>
+    ${i.img ? `<img class="big" src="${i.img}" alt="${esc(i.name)}">` : '<div style="height:56px"></div>'}
+    <div class="body">${mark(i)}<h3>${esc(i.name)}</h3>${i.desc ? `<p class="d">${esc(i.desc)}</p>` : ''}
+    ${i.prices.length > 1 ? `<div class="sizes" role="group" aria-label="Size">${i.prices.map((p, k) => `<button data-size="${k}" aria-pressed="${k === size}">${SIZES[k] || 'Size ' + (k + 1)}<small>${rs(p)}</small></button>`).join('')}</div>` : ''}
+    <div class="foot"><div class="step"><button data-q="-1" aria-label="One less">−</button><span>${qty}</span><button data-q="1" aria-label="One more">+</button></div>
+    <button class="primary" data-put>Add ${qty} · ${rs(i.prices[size] * qty)}</button></div></div>`;
+}
+function drawList() {
+  const rows = Object.entries(list).filter(([, v]) => v > 0);
+  const total = rows.reduce((a, [k, v]) => { const [id, s] = k.split(':'); return a + byId[id].prices[s] * v; }, 0);
+  $('#sheet').innerHTML = `<button class="close" data-close aria-label="Close">×</button><div class="body" style="padding-top:22px">
+    <h3>Your list</h3><p class="d">Show this to your server to order.</p><div style="margin-top:12px">
+    ${rows.map(([k, v]) => { const [id, s] = k.split(':'), i = byId[id];
+      return `<div class="line"><div>${mark(i)}<div style="font-weight:700">${esc(i.name)}${i.prices.length > 1 ? ` <small style="color:var(--muted)">(${SIZES[s]})</small>` : ''}</div><div>${rs(i.prices[s] * v)}</div></div>
+      <div class="q"><button data-lk="${k}" data-d="-1" aria-label="One less">−</button><span style="min-width:22px;text-align:center;font-weight:700">${v}</span><button data-lk="${k}" data-d="1" aria-label="One more">+</button></div></div>`; }).join('')}
+    </div><div class="line" style="font-weight:700;font-size:18px"><span>Total</span><span>${rs(total)}</span></div>
+    <p class="note">Before taxes. Pizza sizes are placeholder names.</p>
+    <div class="foot"><button class="primary" data-clear style="background:var(--surface);color:var(--ink);border:1.5px solid var(--line)">Clear list</button></div></div>`;
+}
+function show(on) {
+  $('#sheet').classList.toggle('on', on); $('#scrim').classList.toggle('on', on);
+  document.body.style.overflow = on ? 'hidden' : '';
+  if (on) setTimeout(() => $('#sheet .close').focus(), 50);
+}
+function bump(k, d) { list[k] = Math.max(0, (list[k] || 0) + d); if (!list[k]) delete list[k]; save(); updateBar(); }
+function updateBar() {
+  const rows = Object.entries(list), n = rows.reduce((a, [, v]) => a + v, 0);
+  const total = rows.reduce((a, [k, v]) => { const [id, s] = k.split(':'); return a + byId[id].prices[s] * v; }, 0);
+  $('#cbl').textContent = `${n} ${n === 1 ? 'item' : 'items'} · ${rs(total)}`;
+  $('#cartbar').classList.toggle('on', n > 0);
+  document.querySelectorAll('[data-add]').forEach(b => { const c = qtyOf(b.dataset.add); b.classList.toggle('has', c > 0); b.textContent = c ? c + ' added' : 'Add'; });
+}
+
+// scroll spy: highlight the last category whose heading has passed under the sticky bar
+let curCat = null;
+function spy() {
+  const edge = $('#bar').getBoundingClientRect().bottom + 40;
+  let c = null;
+  document.querySelectorAll('section.cat').forEach(sec => { if (sec.getBoundingClientRect().top <= edge) c = sec.dataset.c; });
+  c = c || document.querySelector('section.cat')?.dataset.c;
+  if (c === curCat) return;
+  curCat = c;
+  document.querySelectorAll('.chip[data-c]').forEach(ch => {
+    const on = ch.dataset.c === c; ch.classList.toggle('cur', on);
+    if (on) ch.parentNode.scrollTo({left: c === document.querySelector('section.cat')?.dataset.c ? 0 : ch.offsetLeft - 16, behavior: 'smooth'}); // first category: keep the filters in view
+  });
+}
+addEventListener('scroll', spy, {passive: true});
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('button,[data-open]'); if (!t) return;
+  const d = t.dataset;
+  if (d.t) { tab = d.t; q = ''; $('#q').value = ''; const h = HERO[tab]; if (h) { $('#heroimg').src = 'img/' + h[0] + '.jpg'; $('#heroimg').alt = "Chavadi's rooftop: " + h[1]; } renderTabs(); render(); window.scrollTo({top: $('#list').offsetTop - $('#bar').offsetHeight}); }
+  else if (d.f) { d.f === 'veg' ? vegOnly = !vegOnly : spicyOnly = !spicyOnly; render(); }
+  else if (d.c && t.classList.contains('chip')) $('#c-' + slug(d.c)).scrollIntoView({behavior: 'smooth'});
+  else if (d.add) { const i = byId[d.add]; i.prices.length > 1 ? open(d.add) : bump(key(d.add, 0), 1); }
+  else if (d.open) open(d.open);
+  else if ('close' in d) show(false);
+  else if (d.size) { size = +d.size; drawSheet(); }
+  else if (d.q) { qty = Math.max(1, qty + +d.q); drawSheet(); }
+  else if ('put' in d) { bump(key(cur.id, size), qty); show(false); }
+  else if (d.lk) { bump(d.lk, +d.d); Object.keys(list).length ? drawList() : show(false); }
+  else if ('clear' in d) { list = {}; save(); updateBar(); show(false); }
+  else if (t.id === 'cartbar') { drawList(); show(true); }
+  else if (t.id === 'sbtn') { const on = $('#sbox').classList.toggle('on'); t.setAttribute('aria-expanded', on); if (on) $('#q').focus(); else { q = ''; $('#q').value = ''; render(); } }
+});
+$('#scrim').onclick = () => show(false);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') show(false);
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-open]')) { e.preventDefault(); open(e.target.dataset.open); }
+});
+$('#q').addEventListener('input', e => { q = e.target.value; render(); });
+
+renderTabs(); render(); updateBar();
+</script>
+</body>
+</html>
