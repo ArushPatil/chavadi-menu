@@ -31,6 +31,7 @@ Then open http://localhost:8811 on a phone-width window.
 | Search, Veg only, Spicy | The three filters a guest reaches for first. |
 | Indian veg / non-veg mark on every item | The symbol diners already read without thinking. |
 | Text left, square photo right, Add on the photo | Scannable list; photo sells the dish; one tap to add. |
+| Add turns into − 1 + on the photo | Change the quantity from the menu, no sheet needed. Dishes with sizes: + opens the size picker; − opens the list if more than one size is in it. |
 | Tap a dish for a bottom sheet | Big photo, full description, size picker, quantity. |
 | "Your list" bar at the bottom | Guests build an order and show it to the server. No checkout yet. |
 | 44px tap targets, focus rings, reduced motion respected | Usable one-handed, with a keyboard, and for motion-sensitive guests. |

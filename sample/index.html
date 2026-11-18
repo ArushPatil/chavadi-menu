@@ -72,7 +72,9 @@ section.cat .n{font-size:13px;color:var(--muted);margin-bottom:10px}
 .ph img{width:112px;height:112px;object-fit:cover;border-radius:var(--r);background:#E9E2D6}
 .ph .noimg{width:112px;height:72px;border-radius:var(--r);background:var(--surface);border:1px dashed var(--line)}
 .add{position:absolute;left:50%;bottom:-12px;transform:translateX(-50%);min-width:84px;min-height:36px;border-radius:10px;background:var(--surface);color:var(--ember);font-weight:700;font-size:14px;box-shadow:0 2px 8px rgba(31,27,22,.14);border:1px solid var(--line)}
-.add.has{background:var(--ember);color:var(--ember-ink);border-color:var(--ember)}
+.ctl{position:absolute;left:50%;bottom:-12px;transform:translateX(-50%);display:flex;align-items:center;height:36px;border-radius:10px;background:var(--ember);color:var(--ember-ink);font-weight:700;box-shadow:0 2px 8px rgba(31,27,22,.14)}
+.ctl button{width:40px;height:44px;font-size:18px;font-weight:700;color:inherit}
+.ctl span{min-width:16px;text-align:center;font-size:15px}
 
 /* veg mark: the Indian square-with-dot */
 .mark{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
@@ -199,8 +201,15 @@ function card(i) {
   return `<div class="item" data-open="${i.id}" role="button" tabindex="0" aria-label="${esc(i.name)}, ${rs(i.prices[0])}">
     <div class="txt">${mark(i)}${origin(i)}<h3>${esc(i.name)}</h3>${i.desc ? `<p class="d">${esc(i.desc)}</p>` : ''}<p class="p">${from}${rs(i.prices[0])}</p></div>
     <div class="ph">${i.img ? `<img src="${i.img}" alt="" loading="lazy" width="112" height="112">` : '<div class="noimg"></div>'}
-      <button class="add ${n ? 'has' : ''}" data-add="${i.id}" aria-label="Add ${esc(i.name)}">${n ? n + ' added' : 'Add'}</button></div>
+      ${ctl(i)}</div>
   </div>`;
+}
+
+// Add, or a stepper once the dish is in the list
+function ctl(i) {
+  const n = qtyOf(i.id), nm = esc(i.name);
+  if (!n) return `<button class="add" data-add="${i.id}" aria-label="Add ${nm}">Add</button>`;
+  return `<div class="ctl" data-ctl="${i.id}"><button data-dec="${i.id}" aria-label="One less ${nm}">−</button><span aria-live="polite">${n}</span><button data-add="${i.id}" aria-label="One more ${nm}">+</button></div>`;
 }
 
 // detail sheet
@@ -240,7 +249,10 @@ function updateBar() {
   const total = rows.reduce((a, [k, v]) => { const [id, s] = k.split(':'); return a + byId[id].prices[s] * v; }, 0);
   $('#cbl').textContent = `${n} ${n === 1 ? 'item' : 'items'} · ${rs(total)}`;
   $('#cartbar').classList.toggle('on', n > 0);
-  document.querySelectorAll('[data-add]').forEach(b => { const c = qtyOf(b.dataset.add); b.classList.toggle('has', c > 0); b.textContent = c ? c + ' added' : 'Add'; });
+  document.querySelectorAll('.ph').forEach(ph => { const b = ph.querySelector('.add,.ctl'), id = b.dataset.add || b.dataset.ctl, f = document.activeElement && b.contains(document.activeElement) && document.activeElement.dataset;
+    b.outerHTML = ctl(byId[id]);
+    // keep keyboard focus on the stepper after it redraws
+    if (f) (ph.querySelector(f.dec ? '[data-dec]' : '[data-add]') || ph.querySelector('[data-add]')).focus(); });
 }
 
 // scroll spy: highlight the last category whose heading has passed under the sticky bar
@@ -260,12 +272,14 @@ function spy() {
 addEventListener('scroll', spy, {passive: true});
 
 document.addEventListener('click', e => {
+  if (e.target.closest('.ctl') && !e.target.closest('button')) return; // the count itself is not a tap target
   const t = e.target.closest('button,[data-open]'); if (!t) return;
   const d = t.dataset;
   if (d.t) { tab = d.t; q = ''; $('#q').value = ''; const h = HERO[tab]; if (h) { $('#heroimg').src = 'img/' + h[0] + '.jpg'; $('#heroimg').alt = "Chavadi's rooftop: " + h[1]; } renderTabs(); render(); window.scrollTo({top: $('#list').offsetTop - $('#bar').offsetHeight}); }
   else if (d.f) { d.f === 'veg' ? vegOnly = !vegOnly : spicyOnly = !spicyOnly; render(); }
   else if (d.c && t.classList.contains('chip')) $('#c-' + slug(d.c)).scrollIntoView({behavior: 'smooth'});
   else if (d.add) { const i = byId[d.add]; i.prices.length > 1 ? open(d.add) : bump(key(d.add, 0), 1); }
+  else if (d.dec) { const ks = Object.keys(list).filter(k => k.split(':')[0] == d.dec); ks.length === 1 ? bump(ks[0], -1) : (drawList(), show(true)); }
   else if (d.open) open(d.open);
   else if ('close' in d) show(false);
   else if (d.size) { size = +d.size; drawSheet(); }
